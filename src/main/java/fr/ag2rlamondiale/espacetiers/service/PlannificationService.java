@@ -3,59 +3,61 @@ package fr.ag2rlamondiale.espacetiers.service;
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import fr.ag2rlamondiale.espacetiers.client.PlanificationClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.ag2rlamondiale.espacetiers.entity.MyPlannification;
+import fr.ag2rlamondiale.espacetiers.model.MyPlanification;
 import fr.ag2rlamondiale.espacetiers.model.Plage;
 import fr.ag2rlamondiale.espacetiers.useful.Useful;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class PlannificationService {
+	private static List<MyPlanification> allPlanification;
 	public final static int DELTA = 2;
-	private long idBatch;
-	private List<MyPlannification> plannifications;
+	private Integer idBatch;
+	private List<MyPlanification> plannifications;
 	private List<Plage> plages;
 	private int actElement;
-	private static final Logger log = LoggerFactory.getLogger(PlannificationService.class);  
+	private static final Logger log = LoggerFactory.getLogger(PlannificationService.class);
+
+	public static PlanificationClient planificationClient;
 	
-	public PlannificationService(long idBatch) {
+	public PlannificationService(Integer idBatch) {
 		this.idBatch = idBatch;
 		this.actElement = 0;
 		this.plages = new ArrayList<Plage>();
 	}
 	
 	public void charger() {
-		// get plannification for idBatch && actif
-		
-		MyPlannification p1 = new MyPlannification();
-		p1.setStartTime(480);
-		p1.setEndTime(780);
-		p1.setEach(20);
-		p1.setBatchID(1L);
-		
-		MyPlannification p3 = new MyPlannification();
-		p3.setStartTime(1200);
-		p3.setEndTime(360);
-		p3.setEach(60);
-		p3.setBatchID(1L);
-		
-		MyPlannification p2 = new MyPlannification();
-		p2.setStartTime(0);
-		p2.setEndTime(420);
-		p2.setBatchID(2L);
-		
-		if(this.idBatch == 1L)
-			this.plannifications = Arrays.asList(p1, p3);
-		else
-			this.plannifications = Arrays.asList(p2);
+		this.plannifications = allPlanification
+				.stream()
+				.filter(p -> p.getBatchID().equals(this.idBatch))
+				.collect(Collectors.toList());
 	}
 	
-	public static List<Long> getAllBatchIds() {
-		// get all plannification et extrait les id des batch en unique
-		return Arrays.asList(1L, 2L);
+	public static List<Integer> getAllBatchIds() {
+		allPlanification = planificationClient
+				.getAllActivePlanifications()
+				.block()
+				.getValues()
+				.stream()
+				.map(p -> new MyPlanification(p))
+				.collect(Collectors.toList());
+
+		Set<Integer> batchIds = allPlanification
+				.stream()
+				.map(p -> p.getBatchID())
+				.collect(Collectors.toSet());
+
+		return batchIds
+				.stream()
+				.collect(Collectors.toList());
 	}
 	
 	public Plage getPlageForTime(LocalDateTime time) {
@@ -84,36 +86,19 @@ public class PlannificationService {
 		
 	}
 	
-	private boolean checkDayAviability(MyPlannification p, LocalDateTime date) {
-		// YEARS
-		if(p.getYears() != null && !p.getYears().isEmpty() && !p.getYears().contains(date.getYear()))
-			return false;
-		
-		// MONTHS
-		if(p.getMonths() != null && !p.getMonths().isEmpty() && !p.getMonths().contains(date.getMonth().getValue()))
-			return false;
-		
-		// DAY OF MONTH
-		if(p.getmDays() != null && !p.getmDays().isEmpty()) {
-			if(!p.getmDays().contains(date.getDayOfMonth())) {
-				return false;
-			}
-		}else{
-			// WEEK OF MONTH
-			if(p.getWeeks() != null && !p.getWeeks().isEmpty() && !p.getWeeks().contains(getWeeksOfTime(date))) {
-				return false;
-			}
-			// DAY OF WEEK
-			else if(p.getwDays() != null && !p.getwDays().isEmpty() && !p.getwDays().contains(date.getDayOfWeek().getValue())) {
-				return false;
-			}
-		}
-		return true;
+	private boolean checkDayAviability(MyPlanification p, LocalDateTime date) {
+		return !(
+		/*years	*/			(p.getYears()  != null && !p.getYears().isEmpty()  && !p.getYears().contains(date.getYear())) ||
+		/*months*/			(p.getMonths() != null && !p.getMonths().isEmpty() && !p.getMonths().contains(date.getMonth().getValue())) ||
+		/*mDays */			(p.getMDays()  != null && !p.getMDays().isEmpty()  && !p.getMDays().contains(date.getDayOfMonth())) ||
+		/*weeks */			(p.getWeeks()  != null && !p.getWeeks().isEmpty()  && !p.getWeeks().contains(getWeeksOfTime(date))) ||
+		/*wDays */			(p.getWDays()  != null && !p.getWDays().isEmpty()  && !p.getWDays().contains(date.getDayOfWeek().getValue()))
+		);
 	}
 	
-	private List<Plage> extractPlagesForDay(MyPlannification p, LocalDateTime start, LocalDateTime end, LocalDateTime day){
-		LocalDateTime pStart = day.withMinute(p.getStartTime() % 60).withHour(p.getStartTime() / 60);
-		LocalDateTime pEnd = day.withMinute(p.getEndTime() % 60).withHour(p.getEndTime() / 60);
+	private List<Plage> extractPlagesForDay(MyPlanification p, LocalDateTime start, LocalDateTime end, LocalDateTime day){
+		LocalDateTime pStart = Useful.setTimeFromMinutes(day, p.getStartTime());
+		LocalDateTime pEnd = Useful.setTimeFromMinutes(day, p.getEndTime());
 		List<Plage> res = new ArrayList<Plage>();
 		
 		//Si une plage commence aujourd'hui et se fini demain 		
@@ -135,9 +120,9 @@ public class PlannificationService {
 		return res;
 	}
 	
-	private List<Plage> getPlageBeta(MyPlannification p, LocalDateTime start, LocalDateTime end) {
-		LocalDateTime startOfStart = start.withMinute(0).withHour(0).withSecond(0).withNano(0);
-		LocalDateTime endOfEnd = end.plusDays(1).withMinute(0).withHour(0).withSecond(0).withNano(0).minusNanos(1);
+	private List<Plage> getPlageBeta(MyPlanification p, LocalDateTime start, LocalDateTime end) {
+		LocalDateTime startOfStart = Useful.getMidnightForDay(start);
+		LocalDateTime endOfEnd = Useful.getMidnightForDay(end.plusDays(1)).minusNanos(1);
 		List<Plage> res = new ArrayList<Plage>();
 		LocalDateTime actDay = startOfStart.minusDays(1);
 		while(actDay.isBefore(endOfEnd)) {
@@ -158,7 +143,7 @@ public class PlannificationService {
 			if(res.plusMinutes(each).isAfter(startPlage)) {
 				return res;
 			}
-			res.plusMinutes(each);
+			res = res.plusMinutes(each);
 		}
 	}
 	

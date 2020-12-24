@@ -2,9 +2,6 @@ package fr.ag2rlamondiale.espacetiers.model;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-
-import fr.ag2rlamondiale.espacetiers.XibApplication;
 import fr.ag2rlamondiale.espacetiers.service.SupervisorService;
 
 public class Plage {

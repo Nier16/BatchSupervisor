@@ -1,6 +1,9 @@
 package fr.ag2rlamondiale.espacetiers.useful;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 final public class Useful {
 	
@@ -27,5 +30,18 @@ final public class Useful {
 	
 	static public LocalDateTime getTodayMidnight() {
 		return getTodayWithTime(0, 0);
+	}
+
+	static public LocalDateTime getMidnightForDay(LocalDateTime day){
+		return day.withHour(0).withMinute(0).withSecond(0).withNano(0);
+	}
+
+	static  public LocalDateTime setTimeFromMinutes(LocalDateTime day, int minutes){
+		return day.withMinute(minutes % 60).withHour(minutes / 60).withSecond(0).withNano(0);
+	}
+
+	static public List<Integer> extractIntegersFromString(String text, String separator) {
+		return Arrays.stream(text.split(separator)).map(
+				el -> Integer.parseInt(el)).collect(Collectors.toList());
 	}
 }

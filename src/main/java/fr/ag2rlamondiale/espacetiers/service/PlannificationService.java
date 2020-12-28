@@ -3,6 +3,7 @@ package fr.ag2rlamondiale.espacetiers.service;
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,7 +74,7 @@ public class PlannificationService {
 		for(int i = 0 ; i < this.plannifications.size() ; i++) {
 			this.plages.addAll(this.getPlageBeta(this.plannifications.get(i), start, end));
 		}
-		this.plages.sort((p1,p2) -> p1.getStart().compareTo(p2.getStart()));
+		this.plages.sort(Comparator.comparing(Plage::getStart));
 	}
 	
 	public Plage next() {

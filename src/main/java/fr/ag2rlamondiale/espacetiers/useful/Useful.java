@@ -41,7 +41,10 @@ final public class Useful {
 	}
 
 	static public List<Integer> extractIntegersFromString(String text, String separator) {
-		return Arrays.stream(text.split(separator)).map(
-				el -> Integer.parseInt(el)).collect(Collectors.toList());
+		if(text != null ) {
+			return Arrays.stream(text.split(separator)).map(
+					el -> Integer.parseInt(el)).collect(Collectors.toList());
+		}
+		return null;
 	}
 }

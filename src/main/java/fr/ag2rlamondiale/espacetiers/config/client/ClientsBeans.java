@@ -10,16 +10,15 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 @Configuration
 public class ClientsBeans {
 
-   // @Value("${ag2r.hec.planification.base-url}")
-    private String planificationBaseUrl = "https://localhost:8080";
+    @Value("${ag2r.hec.planification.base-url}")
+    private String planificationBaseUrl;
 
     @Autowired
     WebClient.Builder builder;
 
     @Bean(name = "planification")
     public WebClient planificationWebClient() {
-        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(planificationBaseUrl);
-        return builder.uriBuilderFactory(factory).build();
+        return builder.baseUrl(planificationBaseUrl).build();
     }
 
 }

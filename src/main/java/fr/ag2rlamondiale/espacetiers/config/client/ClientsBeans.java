@@ -1,5 +1,6 @@
 package fr.ag2rlamondiale.espacetiers.config.client;
 
+import fr.ag2rlamondiale.espacetiers.config.security.jwt.ClientTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
 public class ClientsBeans {
+    public static final String AUTHORISATION = "";
 
     @Value("${ag2r.hec.planification.base-url}")
     private String planificationBaseUrl;
@@ -16,9 +18,15 @@ public class ClientsBeans {
     @Autowired
     WebClient.Builder builder;
 
+    @Autowired
+    ClientTokenProvider clientTokenProvider;
+
     @Bean(name = "planification")
     public WebClient planificationWebClient() {
-        return builder.baseUrl(planificationBaseUrl).build();
+        return builder
+                .baseUrl(planificationBaseUrl)
+                .defaultHeader(clientTokenProvider.injectHeader())
+                .build();
     }
 
 }

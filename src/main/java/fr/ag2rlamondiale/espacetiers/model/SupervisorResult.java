@@ -1,5 +1,5 @@
 package fr.ag2rlamondiale.espacetiers.model;
 
 public enum SupervisorResult {
-	OK, KO_PLAGE, KO_LANCEMENT, KO_TRAITEMENT
+	OK, OUT_SLOT_KO, LAUNCH_KO, PROCEED_KO
 }

@@ -1,31 +1,31 @@
 package fr.ag2rlamondiale.espacetiers.config.client;
 
 import fr.ag2rlamondiale.espacetiers.config.security.jwt.ClientTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
 public class ClientsBeans {
-    public static final String AUTHORISATION = "";
 
-    @Value("${ag2r.hec.planification.base-url}")
-    private String planificationBaseUrl;
+    @Value("${ag2r.hec.schedule.base-url}")
+    private String scheduleBaseUrl;
 
-    @Autowired
-    WebClient.Builder builder;
+    private final WebClient.Builder builder;
+    private final ClientTokenProvider clientTokenProvider;
 
-    @Autowired
-    ClientTokenProvider clientTokenProvider;
+    public ClientsBeans(WebClient.Builder builder, ClientTokenProvider clientTokenProvider){
+        this.builder = builder;
+        this.clientTokenProvider = clientTokenProvider;
+    }
 
-    @Bean(name = "planification")
-    public WebClient planificationWebClient() {
+    @Bean(name = "schedule")
+    public WebClient scheduleWebClient() {
         return builder
-                .baseUrl(planificationBaseUrl)
-                .defaultHeader(clientTokenProvider.injectHeader())
+                .baseUrl(scheduleBaseUrl)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader())
                 .build();
     }
 

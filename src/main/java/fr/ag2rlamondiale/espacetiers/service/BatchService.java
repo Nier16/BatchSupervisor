@@ -5,65 +5,72 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.ag2rlamondiale.espacetiers.model.BatchState;
-import fr.ag2rlamondiale.espacetiers.model.Plage;
+import fr.ag2rlamondiale.espacetiers.model.Slot;
 import fr.ag2rlamondiale.espacetiers.model.SupervisorResult;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class BatchService {
-	private PlannificationService pService;
-	private StateService sService;
-	private static final Logger log = LoggerFactory.getLogger(BatchService.class);  
-	
-	public BatchService(Integer idBatch) {
-		pService = new PlannificationService(idBatch);
-		sService = new StateService(idBatch);
+
+	private final ScheduleService scheduleService;
+	private final StateService stateService;
+	private static final Logger log = LoggerFactory.getLogger(BatchService.class);
+
+	public BatchService(ScheduleService scheduleService, StateService stateService){
+		this.scheduleService = scheduleService;
+		this.stateService = stateService;
 	}
-	
-	void traitement() {
+
+	void proceed(int idBatch) {
 		boolean firstWasProceed = true;
-		pService.charger();
-		sService.charger();
-		BatchState sState = sService.next();
-		Plage plage;
-		if(sState == null) {
+		Slot slot;
+		BatchState batchState;
+
+		scheduleService.load(idBatch);
+		stateService.load(idBatch);
+
+		batchState = stateService.next();
+
+		if(batchState == null) {
 			return;
 		}
 
-		pService.loadPlages(sState.getCreateDate(), SupervisorService.startTime);
-		plage = pService.next();
+		scheduleService.loadSlots(batchState.getCreateDate(), SupervisorService.startTime);
+		slot = scheduleService.next();
 		
-		if(sState.wasProceed()) {
+		if(batchState.wasProceed()) {
 			firstWasProceed = false;
-			sState = sService.next();
-			plage = pService.next();
+			batchState = stateService.next();
+			slot = scheduleService.next();
 		}
 		
-		while(sState != null || plage != null) {
-			if(sState == null) {
-				if(!plage.isActif()) {
-					sService.addState(SupervisorResult.KO_LANCEMENT, plage.getEnd());
+		while(batchState != null || slot != null) {
+			if(batchState == null) {
+				if(!slot.isActive()) {
+					stateService.addState(SupervisorResult.LAUNCH_KO, slot.getEnd());
 				}
-				plage = pService.next();
-			}else if(plage == null) {
-				sService.updateState(sState, SupervisorResult.KO_PLAGE);
-				sState = sService.next();
-			}else if(plage.isTimeBefore(sState.getCreateDate())) {
-				sService.updateState(sState, SupervisorResult.KO_PLAGE);
-				sState = sService.next();
-			}else if(plage.isTimeAfter(sState.getCreateDate())) {
-				sService.addState(SupervisorResult.KO_LANCEMENT, plage.getEnd());
-				plage = pService.next();
+				slot = scheduleService.next();
+			}
+			else if(slot == null) {
+				stateService.updateState(batchState, SupervisorResult.OUT_SLOT_KO);
+				batchState = stateService.next();
+			}else if(slot.isTimeBefore(batchState.getCreateDate())) {
+				stateService.updateState(batchState, SupervisorResult.OUT_SLOT_KO);
+				batchState = stateService.next();
+			}else if(slot.isTimeAfter(batchState.getCreateDate())) {
+				stateService.addState(SupervisorResult.LAUNCH_KO, slot.getEnd());
+				slot = scheduleService.next();
 			}else {
-				sService.updateState(sState, SupervisorResult.OK);
-				sState = sService.next();
-				plage = pService.next();
+				stateService.updateState(batchState, SupervisorResult.OK);
+				batchState = stateService.next();
+				slot = scheduleService.next();
 			}
 		}
 
-		if(sService.lastSaved() != null && sService.lastSaved().getResult() != SupervisorResult.OK
-				&& (sService.first() == null || firstWasProceed || sService.first().getResult() == SupervisorResult.OK)) {
+		if(stateService.lastSaved() != null && stateService.lastSaved().getResult() != SupervisorResult.OK
+				&& (stateService.first() == null || firstWasProceed || stateService.first().getResult() == SupervisorResult.OK)) {
 			// sauvgarder pour envoi mail
-			log.info("Envoie notification KO pour " + sService.lastSaved().toString());
+			log.info("Envoie notification KO pour " + stateService.lastSaved().toString());
 		}
 		
 	}

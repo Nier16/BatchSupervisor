@@ -10,19 +10,18 @@ import org.slf4j.LoggerFactory;
 import fr.ag2rlamondiale.espacetiers.model.BatchState;
 import fr.ag2rlamondiale.espacetiers.model.SupervisorResult;
 import fr.ag2rlamondiale.espacetiers.useful.Useful;
+import org.springframework.stereotype.Service;
 
+@Service
 public class StateService {
 	private long idBatch;
 	private List<BatchState> states; 
-	private int actElement = 0;
+	private int actElement;
 	private static final Logger log = LoggerFactory.getLogger(StateService.class); 
 	private BatchState lastSaved;
-
-	public StateService(long idBatch) {
-		this.idBatch = idBatch;
-	}
 	
-	public void charger() {
+	public void load(long idBatch) {
+		this.idBatch = idBatch;
 		// get Last states for idBatch
 		
 		// 1L
@@ -42,6 +41,9 @@ public class StateService {
 			states = Arrays.asList(s0, s1, s2, s3);
 		else
 			states = Arrays.asList(s5, s6, s7);
+
+		this.actElement = 0;
+		this.lastSaved = null;
 	}
 	
 	public BatchState next() {
@@ -51,16 +53,6 @@ public class StateService {
 		}
 		log.warn("Les states sont fini pour le batch " + this.idBatch);
 		return null;
-	}
-	
-	public void goToFirst() {
-		this.actElement = 0;
-	}
-	
-	public BatchState previous() {
-		if(this.actElement == 0)
-			return null;
-		return this.states.get(this.actElement - 1);
 	}
 	
 	public BatchState first() {

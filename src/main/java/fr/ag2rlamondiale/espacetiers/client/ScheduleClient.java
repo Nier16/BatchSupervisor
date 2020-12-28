@@ -15,7 +15,7 @@ public class ScheduleClient {
     private final WebClient client;
 
     public Mono<ScheduleListDto> getAllActiveSchedules() {
-        return this.client.get().uri("/getSchedules")
+        return this.client.get().uri("/getSchedules?active=true")
                 .retrieve()
                 .bodyToMono(ScheduleListDto.class);
     }

@@ -1,0 +1,17 @@
+fr\ag2rlamondiale\espacetiers\config\client\ClientsBeans.class
+fr\ag2rlamondiale\espacetiers\service\SupervisorService.class
+fr\ag2rlamondiale\espacetiers\dto\Planification.class
+fr\ag2rlamondiale\espacetiers\model\HoursMinute.class
+fr\ag2rlamondiale\espacetiers\model\Plage.class
+fr\ag2rlamondiale\espacetiers\model\BatchState.class
+fr\ag2rlamondiale\espacetiers\service\BatchService.class
+fr\ag2rlamondiale\espacetiers\client\PlanificationClient.class
+fr\ag2rlamondiale\espacetiers\controller\TestController.class
+fr\ag2rlamondiale\espacetiers\config\security\jwt\ClientTokenProvider.class
+fr\ag2rlamondiale\espacetiers\service\StateService.class
+fr\ag2rlamondiale\espacetiers\BatchSupervisorApplication.class
+fr\ag2rlamondiale\espacetiers\model\MyPlanification.class
+fr\ag2rlamondiale\espacetiers\model\SupervisorResult.class
+fr\ag2rlamondiale\espacetiers\dto\PlanificationListDto.class
+fr\ag2rlamondiale\espacetiers\service\PlannificationService.class
+fr\ag2rlamondiale\espacetiers\useful\Useful.class

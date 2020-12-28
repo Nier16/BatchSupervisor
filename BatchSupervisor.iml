@@ -115,5 +115,7 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:5.2.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:5.2.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt:0.9.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: javax.xml.bind:jaxb-api:2.3.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: javax.activation:javax.activation-api:1.2.0" level="project" />
   </component>
 </module>

@@ -15,7 +15,7 @@ import fr.ag2rlamondiale.hec.jwtToken.util.JwtTokenUtil;
 
 @Component
 public class ClientTokenProvider {
-    public static final String IDREN_KEY = "IDREN";
+    public static final String IDREN_KEY = "idren";
     public static final String IDREN_VALUE = "12345";
 
     @Value("${jwt.private.key}")

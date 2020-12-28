@@ -1,0 +1,17 @@
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\controller\TestController.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\model\MyPlanification.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\service\StateService.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\config\security\jwt\ClientTokenProvider.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\service\PlannificationService.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\useful\Useful.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\BatchSupervisorApplication.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\dto\Planification.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\client\PlanificationClient.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\config\client\ClientsBeans.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\service\BatchService.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\model\Plage.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\model\BatchState.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\dto\PlanificationListDto.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\model\HoursMinute.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\service\SupervisorService.java
+C:\Users\serrai\project\java\BatchSupervisor\src\main\java\fr\ag2rlamondiale\espacetiers\model\SupervisorResult.java

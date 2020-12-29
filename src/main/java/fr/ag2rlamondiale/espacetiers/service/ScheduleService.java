@@ -11,17 +11,17 @@ import fr.ag2rlamondiale.espacetiers.client.ScheduleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.ag2rlamondiale.espacetiers.model.CustomSchedule;
+import fr.ag2rlamondiale.espacetiers.dto.Schedule;
 import fr.ag2rlamondiale.espacetiers.model.Slot;
 import fr.ag2rlamondiale.espacetiers.useful.Useful;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ScheduleService {
-	private static List<CustomSchedule> allSchedules;
+	private static List<Schedule> allSchedules;
 	public final static int DELTA = 2;
 	private int idBatch;
-	private List<CustomSchedule> schedules;
+	private List<Schedule> schedules;
 	private List<Slot> slots;
 	private int actElement;
 	private static final Logger log = LoggerFactory.getLogger(ScheduleService.class);
@@ -36,16 +36,13 @@ public class ScheduleService {
 		allSchedules = Objects.requireNonNull(scheduleClient
 				.getAllActiveSchedules()
 				.block())
-				.getValues()
-				.stream()
-				.map(CustomSchedule::new)
-				.collect(Collectors.toList());
+				.getValues();
 	}
 
 	public List<Integer> getAllBatchIds() {
 		return allSchedules
 				.stream()
-				.map(CustomSchedule::getBatchID)
+				.map(Schedule::getBatchID)
 				.distinct()
 				.collect(Collectors.toList());
 	}
@@ -57,12 +54,12 @@ public class ScheduleService {
 
 		this.schedules = allSchedules
 				.stream()
-				.filter(p -> p.getBatchID().equals(this.idBatch))
+				.filter(p -> p.getBatchID() == this.idBatch)
 				.collect(Collectors.toList());
 	}
 	
 	public void loadSlots(LocalDateTime start, LocalDateTime end){
-		for (CustomSchedule schedule : this.schedules) {
+		for (Schedule schedule : this.schedules) {
 			this.slots.addAll(this.getSlotsForSchedule(schedule, start, end));
 		}
 		this.slots.sort(Comparator.comparing(Slot::getStart));
@@ -78,17 +75,17 @@ public class ScheduleService {
 		
 	}
 	
-	private boolean checkDayAvailability(CustomSchedule p, LocalDateTime date) {
+	private boolean checkDayAvailability(Schedule p, LocalDateTime date) {
 		return !(
 		/*years	*/			(p.getYears()  != null && !p.getYears().isEmpty()  && !p.getYears().contains(date.getYear())) ||
 		/*months*/			(p.getMonths() != null && !p.getMonths().isEmpty() && !p.getMonths().contains(date.getMonth().getValue())) ||
-		/*mDays */			(p.getMDays()  != null && !p.getMDays().isEmpty()  && !p.getMDays().contains(date.getDayOfMonth())) ||
+		/*mDays */			(p.getMonthDays()  != null && !p.getMonthDays().isEmpty()  && !p.getMonthDays().contains(date.getDayOfMonth())) ||
 		/*weeks */			(p.getWeeks()  != null && !p.getWeeks().isEmpty()  && !p.getWeeks().contains(Useful.getWeeksOfTime(date))) ||
-		/*wDays */			(p.getWDays()  != null && !p.getWDays().isEmpty()  && !p.getWDays().contains(date.getDayOfWeek().getValue()))
+		/*wDays */			(p.getWeekDays()  != null && !p.getWeekDays().isEmpty()  && !p.getWeekDays().contains(date.getDayOfWeek().getValue()))
 		);
 	}
 	
-	private List<Slot> getSlotsForScheduleAndDay(CustomSchedule p, LocalDateTime start, LocalDateTime end, LocalDateTime day){
+	private List<Slot> getSlotsForScheduleAndDay(Schedule p, LocalDateTime start, LocalDateTime end, LocalDateTime day){
 		LocalDateTime pStart = Useful.setTimeFromMinutes(day, p.getStartTime());
 		LocalDateTime pEnd = Useful.setTimeFromMinutes(day, p.getEndTime());
 		List<Slot> res = new ArrayList<>();
@@ -112,7 +109,7 @@ public class ScheduleService {
 		return res;
 	}
 	
-	private List<Slot> getSlotsForSchedule(CustomSchedule p, LocalDateTime start, LocalDateTime end) {
+	private List<Slot> getSlotsForSchedule(Schedule p, LocalDateTime start, LocalDateTime end) {
 		LocalDateTime startOfStart = Useful.getMidnightForDay(start);
 		LocalDateTime endOfEnd = Useful.getMidnightForDay(end.plusDays(1)).minusNanos(1);
 		List<Slot> res = new ArrayList<>();

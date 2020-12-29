@@ -13,6 +13,9 @@ public class ClientsBeans {
     @Value("${ag2r.hec.schedule.base-url}")
     private String scheduleBaseUrl;
 
+    @Value("${ag2r.hec.state.base-url}")
+    private String stateBaseUrl;
+
     private final WebClient.Builder builder;
     private final ClientTokenProvider clientTokenProvider;
 
@@ -25,6 +28,14 @@ public class ClientsBeans {
     public WebClient scheduleWebClient() {
         return builder
                 .baseUrl(scheduleBaseUrl)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader())
+                .build();
+    }
+
+    @Bean(name = "state")
+    public WebClient stateWebClient() {
+        return builder
+                .baseUrl(stateBaseUrl)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader())
                 .build();
     }

@@ -31,14 +31,4 @@ final public class Useful {
 	static public int getWeeksOfTime(LocalDateTime date) {
 		return date.get(WeekFields.ISO.weekOfMonth());
 	}
-
-	static public List<Integer> extractIntegersFromString(String text, String separator) {
-		if(text != null ) {
-			return Arrays
-					.stream(text.split(separator))
-					.map(Integer::parseInt)
-					.collect(Collectors.toList());
-		}
-		return null;
-	}
 }

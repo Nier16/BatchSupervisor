@@ -4,7 +4,7 @@ package fr.ag2rlamondiale.espacetiers.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.ag2rlamondiale.espacetiers.model.BatchState;
+import fr.ag2rlamondiale.espacetiers.dto.BatchState;
 import fr.ag2rlamondiale.espacetiers.model.Slot;
 import fr.ag2rlamondiale.espacetiers.model.SupervisorResult;
 import org.springframework.stereotype.Service;
@@ -47,21 +47,21 @@ public class BatchService {
 		while(batchState != null || slot != null) {
 			if(batchState == null) {
 				if(!slot.isActive()) {
-					stateService.addState(SupervisorResult.LAUNCH_KO, slot.getEnd());
+					stateService.createStateLater(SupervisorResult.LAUNCH_KO, slot.getEnd());
 				}
 				slot = scheduleService.next();
 			}
 			else if(slot == null) {
-				stateService.updateState(batchState, SupervisorResult.OUT_SLOT_KO);
+				stateService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
 				batchState = stateService.next();
 			}else if(slot.isTimeBefore(batchState.getCreateDate())) {
-				stateService.updateState(batchState, SupervisorResult.OUT_SLOT_KO);
+				stateService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
 				batchState = stateService.next();
 			}else if(slot.isTimeAfter(batchState.getCreateDate())) {
-				stateService.addState(SupervisorResult.LAUNCH_KO, slot.getEnd());
+				stateService.createStateLater(SupervisorResult.LAUNCH_KO, slot.getEnd());
 				slot = scheduleService.next();
 			}else {
-				stateService.updateState(batchState, SupervisorResult.OK);
+				stateService.updateStateLater(batchState, SupervisorResult.OK);
 				batchState = stateService.next();
 				slot = scheduleService.next();
 			}

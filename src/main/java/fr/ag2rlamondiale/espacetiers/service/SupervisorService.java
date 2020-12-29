@@ -14,6 +14,7 @@ public class SupervisorService {
 
 	private final BatchService batchService;
 	private final ScheduleService scheduleService;
+	private final StateService stateService;
 
 	public void proceed() {
 		scheduleService.loadAllActiveSchedules();
@@ -21,5 +22,6 @@ public class SupervisorService {
 		for (Integer batchId : batchIds) {
 			batchService.proceed(batchId);
 		}
+		stateService.saveAllStates();
 	}
 }

@@ -32,7 +32,7 @@ public class StateClient {
         this.client
                 .post()
                 .uri("/saveStates")
-                .bodyValue(states)
+                .bodyValue(new BatchStateListDto(states))
                 .exchange()
                 .block();
     }

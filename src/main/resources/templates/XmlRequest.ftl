@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<demande>
+    <idDemandeMetier>${configuration.requestId}</idDemandeMetier>
+    <email>
+        <tech>
+            <canal>${configuration.channel}</canal>
+            <metaInterne>${configuration.requestId}</metaInterne>
+            <statOuverture>true</statOuverture>
+            <statClics>true</statClics>
+        </tech>
+        <from>
+            <adresseEmail>${configuration.from}</adresseEmail>
+            <adresseEmailErreur>${configuration.from}</adresseEmailErreur>
+        </from>
+        <#list configuration.recipients as recipient>
+            <to>
+                <adresseEmail>${recipient}</adresseEmail>
+            </to>
+        </#list>
+        <objet>${configuration.subject}</objet>
+    </email>
+    <corps>
+        <corpsFournit>
+            <contenu>${htmlContent}</contenu>
+            <type>${configuration.type}</type>
+        </corpsFournit>
+    </corps>
+    <attachements></attachements>
+</demande>

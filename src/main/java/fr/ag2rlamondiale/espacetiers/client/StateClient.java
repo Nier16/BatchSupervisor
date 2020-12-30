@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +24,7 @@ public class StateClient {
     public Mono<BatchStateListDto> getLastStates(int batchId) {
         return this.client
                 .get()
-                .uri("/getStates?batchId=" + batchId + "&end" + SupervisorService.startTime.toString())
+                .uri("/getStates?batchId=" + batchId + "&end=" + SupervisorService.startTime.toString())
                 .retrieve()
                 .bodyToMono(BatchStateListDto.class);
     }
@@ -32,8 +33,9 @@ public class StateClient {
         this.client
                 .post()
                 .uri("/saveStates")
-                .bodyValue(new BatchStateListDto(states))
-                .exchange()
+                .body(Mono.just(new BatchStateListDto(states)), BatchState.class)
+                .retrieve()
+                .bodyToMono(String.class)
                 .block();
     }
 }

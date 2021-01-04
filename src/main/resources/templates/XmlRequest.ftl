@@ -21,7 +21,7 @@
     </email>
     <corps>
         <corpsFournit>
-            <contenu>${htmlContent}</contenu>
+            <contenu>${configuration.htmlContent}</contenu>
             <type>${configuration.type}</type>
         </corpsFournit>
     </corps>

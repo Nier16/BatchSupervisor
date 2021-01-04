@@ -2,15 +2,14 @@ package fr.ag2rlamondiale.espacetiers.client;
 
 import fr.ag2rlamondiale.espacetiers.dto.BatchState;
 import fr.ag2rlamondiale.espacetiers.dto.BatchStateListDto;
-import fr.ag2rlamondiale.espacetiers.service.SupervisorService;
-import lombok.AllArgsConstructor;
+import fr.ag2rlamondiale.espacetiers.service.process.SupervisorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +24,14 @@ public class StateClient {
         return this.client
                 .get()
                 .uri("/getStates?batchId=" + batchId + "&end=" + SupervisorService.startTime.toString())
+                .retrieve()
+                .bodyToMono(BatchStateListDto.class);
+    }
+
+    public Mono<BatchStateListDto> getStatesForPeriod(LocalDateTime start, LocalDateTime end){
+        return this.client
+                .get()
+                .uri("/getStates?start=" + start.toString() + "&end=" + end.toString())
                 .retrieve()
                 .bodyToMono(BatchStateListDto.class);
     }

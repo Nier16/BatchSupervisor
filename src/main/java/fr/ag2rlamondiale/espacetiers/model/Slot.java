@@ -2,7 +2,7 @@ package fr.ag2rlamondiale.espacetiers.model;
 
 import java.time.LocalDateTime;
 
-import fr.ag2rlamondiale.espacetiers.service.SupervisorService;
+import fr.ag2rlamondiale.espacetiers.service.process.SupervisorService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,15 +17,11 @@ public class Slot {
 	private LocalDateTime end;
 
 	public boolean isActive(LocalDateTime time) {
-		return time.isBefore(this.end);
+		return time.isAfter(this.start) && time.isBefore(this.end);
 	}
 
 	public boolean isActive() {
 		return this.isActive(SupervisorService.startTime);
-	}
-
-	public boolean isTimeIn(LocalDateTime time) {
-		return (time.isEqual(this.end) || time.isBefore(this.end)) && (time.isEqual(this.start) || time.isAfter(this.start));
 	}
 
 	public boolean isTimeBefore(LocalDateTime time) {
@@ -34,6 +30,22 @@ public class Slot {
 
 	public boolean isTimeAfter(LocalDateTime time) {
 		return time.isAfter(this.end);
+	}
+
+	public String toString(){
+		if(start != null){
+			if(end != null){
+				if(start.getDayOfYear() == end.getDayOfYear()){
+					return "le " + start.toLocalDate().toString() + " entre " + start.toLocalTime().toString() + " et " + end.toLocalTime().toString();
+				}else{
+					return "Entre le " + start.toString() + " et le " + end.toString();
+				}
+			}else{
+				return "Le " + start.toString();
+			}
+		}else{
+			return "fini le " + end.toString();
+		}
 	}
 
 }

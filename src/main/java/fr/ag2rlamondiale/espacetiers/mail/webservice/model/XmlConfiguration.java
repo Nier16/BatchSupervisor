@@ -1,4 +1,4 @@
-package fr.ag2rlamondiale.espacetiers.mail.model;
+package fr.ag2rlamondiale.espacetiers.mail.webservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,4 +16,5 @@ public class XmlConfiguration {
     private List<String> recipients;
     private String subject;
     private String type;
+    private String htmlContent;
 }

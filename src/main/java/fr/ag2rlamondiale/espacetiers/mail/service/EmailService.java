@@ -1,7 +1,7 @@
 package fr.ag2rlamondiale.espacetiers.mail.service;
 
-import com.alm.esb.service.gesteditique_1.CreerDemCom1Fault;
+import fr.ag2rlamondiale.espacetiers.mail.model.TemplatesNames;
 
 public interface EmailService {
-    void sendEmail(String subject) throws Exception;
+    void sendEmail(String subject, TemplatesNames templateName, Object model) throws Exception;
 }

@@ -1,7 +1,7 @@
 package fr.ag2rlamondiale.espacetiers;
 
 import fr.ag2rlamondiale.espacetiers.mail.service.EmailService;
-import fr.ag2rlamondiale.espacetiers.service.SupervisorService;
+import fr.ag2rlamondiale.espacetiers.service.process.SupervisorService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -15,7 +15,7 @@ public class Launcher implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        emailService.sendEmail("Salut");
-        //supervisorService.proceed();
+        //emailService.sendEmail("Salut");
+        supervisorService.proceed();
     }
 }

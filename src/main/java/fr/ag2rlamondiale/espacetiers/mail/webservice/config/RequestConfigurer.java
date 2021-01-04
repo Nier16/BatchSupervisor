@@ -1,8 +1,8 @@
-package fr.ag2rlamondiale.espacetiers.mail.config;
+package fr.ag2rlamondiale.espacetiers.mail.webservice.config;
 
 import com.alm.esb.service.gesteditique_1.creerdemcom_1.CreerDemComType;
 import com.alm.esb.service.gesteditique_1.creerdemcom_1.DemEditionType;
-import fr.ag2rlamondiale.espacetiers.mail.model.XmlConfiguration;
+import fr.ag2rlamondiale.espacetiers.mail.webservice.model.XmlConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class EmailConfiguration {
+public class RequestConfigurer {
+
     private static final String RECIPIENTS_SEPARATOR = ",";
 
     @Value("${mail.xml.conf.requestId}")
@@ -76,4 +77,5 @@ public class EmailConfiguration {
     private List<String> extractRecipients(){
         return Arrays.asList(recipients.split(RECIPIENTS_SEPARATOR));
     }
+
 }

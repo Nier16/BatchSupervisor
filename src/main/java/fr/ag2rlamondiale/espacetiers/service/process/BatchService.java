@@ -1,6 +1,8 @@
-package fr.ag2rlamondiale.espacetiers.service;
+package fr.ag2rlamondiale.espacetiers.service.process;
 
 
+import fr.ag2rlamondiale.espacetiers.service.data.StateDataService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,16 +12,14 @@ import fr.ag2rlamondiale.espacetiers.model.SupervisorResult;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class BatchService {
+	private static final Logger log = LoggerFactory.getLogger(BatchService.class);
 
 	private final ScheduleService scheduleService;
 	private final StateService stateService;
-	private static final Logger log = LoggerFactory.getLogger(BatchService.class);
-
-	public BatchService(ScheduleService scheduleService, StateService stateService){
-		this.scheduleService = scheduleService;
-		this.stateService = stateService;
-	}
+	private final StateDataService stateDataService;
+	private final ReportService reportService;
 
 	void proceed(int idBatch) {
 		boolean firstWasProceed = true;
@@ -47,30 +47,31 @@ public class BatchService {
 		while(batchState != null || slot != null) {
 			if(batchState == null) {
 				if(!slot.isActive()) {
-					stateService.createStateLater(SupervisorResult.LAUNCH_KO, slot.getEnd());
+					stateDataService.createStateLater(SupervisorResult.LAUNCH_KO, idBatch, slot.getEnd());
 				}
 				slot = scheduleService.next();
 			}
 			else if(slot == null) {
-				stateService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
+				stateDataService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
 				batchState = stateService.next();
 			}else if(slot.isTimeBefore(batchState.getCreateDate())) {
-				stateService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
+				stateDataService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
 				batchState = stateService.next();
 			}else if(slot.isTimeAfter(batchState.getCreateDate())) {
-				stateService.createStateLater(SupervisorResult.LAUNCH_KO, slot.getEnd());
+				stateDataService.createStateLater(SupervisorResult.LAUNCH_KO, idBatch, slot.getEnd());
 				slot = scheduleService.next();
 			}else {
-				stateService.updateStateLater(batchState, SupervisorResult.OK);
+				stateDataService.updateStateLater(batchState, SupervisorResult.OK);
 				batchState = stateService.next();
 				slot = scheduleService.next();
 			}
 		}
 
-		if(stateService.lastSaved() != null && stateService.lastSaved().getResult() != SupervisorResult.OK
+		if(stateDataService.getLastSaved() != null && stateDataService.getLastSaved().getResult() != SupervisorResult.OK
 				&& (stateService.first() == null || firstWasProceed || stateService.first().getResult() == SupervisorResult.OK)) {
 			// sauvgarder pour envoi mail
-			log.info("Envoie notification KO pour " + stateService.lastSaved().toString());
+			reportService.addIncident(stateDataService.getLastSaved());
+			log.info("Envoie notification KO pour " + stateDataService.getLastSaved().toString());
 		}
 		
 	}

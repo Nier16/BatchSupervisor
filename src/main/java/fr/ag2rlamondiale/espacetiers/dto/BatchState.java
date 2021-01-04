@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BatchState {
-	private long idBatch;
+	private int idBatch;
 	private LocalDateTime createDate;
 	private LocalDateTime supervisorDate;
 	private SupervisorResult result;
 	
-	public BatchState(long idBatch, LocalDateTime createDate) {
+	public BatchState(int idBatch, LocalDateTime createDate) {
 		this.idBatch = idBatch;
 		this.createDate = createDate;
 	}

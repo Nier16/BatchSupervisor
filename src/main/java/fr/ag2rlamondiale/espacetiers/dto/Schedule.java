@@ -14,6 +14,7 @@ public class Schedule {
 	private int planID;
 	private int batchID;
 	private String batchName;
+	private String groupName;
 	private Boolean active;
 	private List<Integer> years;
 	private List<Integer> months;

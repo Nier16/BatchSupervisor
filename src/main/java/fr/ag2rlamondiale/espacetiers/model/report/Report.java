@@ -11,16 +11,14 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Report<V extends ReportGroup> {
-    private Map<String, V> reports = new HashMap<>();
+public class Report {
+    private Map<String, SimpleReportGroup> reports = new HashMap<>();
     private Slot period = new Slot();
     private ReportType type;
-    private AdvancedReportTypes advancedReportTypes;
 
-    public void addReportLine(String groupName, ReportLine reportLine){
+    public void addReportLine(String groupName, SimpleReportLine reportLine){
         if(!this.reports.containsKey(groupName)){
-            if(this.type == ReportType.INCIDENT || this.type == ReportType.SIMPLE_REPORT)
-                this.reports.put(groupName, new SimpleReportGroup());
+            this.reports.put(groupName, new SimpleReportGroup());
         }
         this.reports.get(groupName).add(reportLine);
     }

@@ -19,12 +19,12 @@
             </tr>
         </thead>
         <tbody>
-            <#list data.reports as groupName, reports>
+            <#list data.reports as groupName, report>
                 <tr>
                     <th>${groupName}</th>
-                    <th> KO </th>
+                    <th>${report.getResult()}</th>
                 </tr>
-                <#list reports as reportLine>
+                <#list report.reportLines as reportLine>
                     <tr>
                         <td>${reportLine.batchName}</td>
                         <td>KO</td>

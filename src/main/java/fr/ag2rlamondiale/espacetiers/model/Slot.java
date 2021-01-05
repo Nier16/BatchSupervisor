@@ -43,8 +43,10 @@ public class Slot {
 			}else{
 				return "Le " + start.toString();
 			}
-		}else{
+		}else if(end != null){
 			return "fini le " + end.toString();
+		}else {
+			return "la palge n'est pas set";
 		}
 	}
 

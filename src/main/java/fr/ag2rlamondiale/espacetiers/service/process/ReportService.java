@@ -26,18 +26,6 @@ public class ReportService {
     @Value("${report.time:480}")
     private Integer reportTimeInMinutes;
 
-    @Value("${report.advanced:false}")
-    private boolean reportAdvanced;
-
-    @Value("${report.weekDay:0}")
-    private int weekDay;
-
-    @Value("${report.monthDay:0}")
-    private int monthDay;
-
-    @Value("${report.yearDay:0}")
-    private int yearDay;
-
     private final EmailService emailService;
     private final SupervisorInformation supervisorInformation;
     private final ScheduleService scheduleService;
@@ -63,11 +51,7 @@ public class ReportService {
         if(this.haveToReport()){
             Report report = new Report();
             report.getPeriod().setEnd(LocalDateTime.now());
-            if(this.reportAdvanced){
-                this.advancedReport(report);
-            }else{
-                this.simpleReport(report);
-            }
+            this.simpleReport(report);
         }
     }
 
@@ -75,8 +59,7 @@ public class ReportService {
         if(this.incidents.isEmpty())
             return;
 
-        Report<SimpleReportGroup> report = new Report();
-        Map<String, List<SimpleReportLine>> groups = new HashMap<>();
+        Report report = new Report();
         ScheduleInformation scheduleInformation;
         SimpleReportLine reportLine;
 
@@ -84,7 +67,7 @@ public class ReportService {
             scheduleInformation = scheduleService
                     .getScheduleInformation(batchState.getIdBatch());
 
-            reportLine = (SimpleReportLine) scheduleInformation
+            reportLine = scheduleInformation
                     .toReportLine(new SimpleReportLine(false), batchState.getCreateDate());
 
             report.addReportLine(scheduleInformation.getGroupName(), reportLine);
@@ -108,18 +91,6 @@ public class ReportService {
         report.getPeriod().setStart(report.getPeriod().getEnd().minusDays(1));
     }
 
-    private void advancedReport(Report report){
-        AdvancedReportTypes advancedReportTypes = getAdvancedReportType();
-        report.getPeriod().setStart(report.getPeriod().getEnd()
-                .minus(1, advancedReportTypes.getPeriod()));
-        List<BatchState> states = stateClient.getStatesForPeriod(
-                report.getPeriod().getStart(), report.getPeriod().getEnd())
-                .block().getValues();
-
-        for(BatchState state : states){
-            AdvancedReportLine reportLine = new AdvancedReportLine();
-        }
-    }
 
     private boolean haveToReport(){
         LocalDateTime timeToReport = Useful.getTodayWithTime(reportTimeInMinutes / 60, reportTimeInMinutes % 60);
@@ -129,19 +100,6 @@ public class ReportService {
         }else{
             return Useful.isAfterOrEquals(SupervisorService.startTime, timeToReport)
                     && Useful.isBeforeOrEquals(SupervisorService.startTime, SupervisorService.startTime.plusMinutes(DELTA));
-        }
-    }
-
-    private AdvancedReportTypes getAdvancedReportType(){
-        LocalDateTime startTime = SupervisorService.startTime;
-        if(startTime.getDayOfYear() == yearDay){
-            return AdvancedReportTypes.YEARLY;
-        }else if(startTime.getDayOfMonth() == monthDay){
-            return AdvancedReportTypes.MONTHLY;
-        }else if(startTime.getDayOfWeek().getValue() == weekDay){
-            return AdvancedReportTypes.WEEKLY;
-        }else{
-            return AdvancedReportTypes.DAILY;
         }
     }
 }

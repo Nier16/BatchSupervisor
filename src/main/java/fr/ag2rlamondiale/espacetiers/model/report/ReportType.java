@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum ReportType {
     INCIDENT("d'Incident"),
-    SIMPLE_REPORT("Rapport Quotidien"),
-    ADVANCED_REPORT("Rapport avancé");
+    SIMPLE_REPORT("Rapport Quotidien");
 
     private String text;
 

@@ -1,6 +1,6 @@
 package fr.ag2rlamondiale.espacetiers.model;
 
-import fr.ag2rlamondiale.espacetiers.model.report.ReportLine;
+import fr.ag2rlamondiale.espacetiers.model.report.SimpleReportLine;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ public class ScheduleInformation {
     private String groupName;
     private String description;
 
-    public ReportLine toReportLine(ReportLine reportLine, LocalDateTime lastBatchExec){
+    public SimpleReportLine toReportLine(SimpleReportLine reportLine, LocalDateTime lastBatchExec){
         reportLine.setBatchName(batchName);
         reportLine.setInformation(description);
         if(this.active != null){

@@ -27,7 +27,7 @@
                 <#list report.reportLines as reportLine>
                     <tr>
                         <td>${reportLine.batchName}</td>
-                        <td>KO</td>
+                        <td>${reportLine.getResult()}</td>
                         <td>${reportLine.lastSlot.toString()}</td>
                         <td>${reportLine.nextSlot.toString()}</td>
                         <td>${reportLine.information}</td>

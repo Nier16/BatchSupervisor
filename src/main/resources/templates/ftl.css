@@ -1,0 +1,33 @@
+tr, th, td {
+    border: 1px solid;
+    text-align: center;
+    padding: 0 10px 0 10px;
+    font-size: 14px;
+}
+
+.headerOne {
+    background-color: lightgrey;
+}
+
+td {
+    text-align: left;
+}
+
+.groupeName {
+    background-color: antiquewhite !important;
+}
+
+.groupeName > th {
+    font-weight: normal;
+}
+
+.groupeName .result {
+    color: green !important;
+    font-weight: bold !important;
+}
+
+.reportLine .result {
+    text-align: center;
+    color: green !important;
+    font-weight: bold !important;
+}

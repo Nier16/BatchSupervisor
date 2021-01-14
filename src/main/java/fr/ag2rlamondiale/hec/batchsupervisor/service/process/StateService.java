@@ -11,14 +11,13 @@ import fr.ag2rlamondiale.hec.batchsupervisor.dto.BatchState;
 import org.springframework.stereotype.Service;
 
 @Service
-@Data
 public class StateService {
 	private static final Logger log = LoggerFactory.getLogger(StateService.class);
 
 	private StateDataService stateDataService;
 
 	private String idBatch;
-	private List<BatchState> states; 
+	private List<BatchState> states;
 	private int actElement;
 
 
@@ -49,4 +48,5 @@ public class StateService {
 		}
 		return null;
 	}
+
 }

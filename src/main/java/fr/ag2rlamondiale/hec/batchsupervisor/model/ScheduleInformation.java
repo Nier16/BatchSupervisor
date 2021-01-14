@@ -19,6 +19,10 @@ public class ScheduleInformation {
     private String groupName;
     private List<String> description = new ArrayList<>();
 
+    public ScheduleInformation(Slot next){
+        this.next = next;
+    }
+
     public SimpleReportLine toReportLine(SimpleReportLine reportLine, LocalDateTime lastBatchExec){
         reportLine.setBatchName(batchName);
         reportLine.setInformations(description);

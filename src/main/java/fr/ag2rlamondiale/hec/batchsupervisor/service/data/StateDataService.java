@@ -90,12 +90,11 @@ public class StateDataService {
     }
 
     // Creation d'un state et l'ajouter dans une liste qui sera sauvgarder a la fin de tout les traitements
-    public void createStateLater(SupervisorResult result, String idBatch, LocalDateTime createTime) {
+    public void createStateLater(SupervisorResult result, String idBatch) {
         BatchState state = new BatchState();
         state.setIdBatch(idBatch);
         state.setResult(result);
         state.setSupervisorDate(LocalDateTime.now());
-        state.setCreateDate(createTime);
 
         saveStateLater(state);
     }

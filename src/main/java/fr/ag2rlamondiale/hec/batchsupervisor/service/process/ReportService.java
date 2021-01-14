@@ -10,6 +10,7 @@ import fr.ag2rlamondiale.hec.batchsupervisor.service.data.StateDataService;
 import fr.ag2rlamondiale.hec.batchsupervisor.useful.Useful;
 import fr.ag2rlamondiale.hec.batchsupervisor.model.report.Report;
 import fr.ag2rlamondiale.hec.batchsupervisor.model.report.SimpleReportLine;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,17 +58,16 @@ public class ReportService {
         }
 
         Report report = new Report();
-        report.getPeriod().setEnd(SupervisorService.startTime);
+        report.getPeriod().setEnd(getStartTime());
         if(this.haveToReport){
             report.getPeriod().setStart(report.getPeriod().getEnd().minusDays(1));
-            this.report(false);
+            this.report(false, report);
         }else{
-            this.report(true);
+            this.report(true, report);
         }
     }
 
-    private void report(boolean incident){
-        Report report = new Report();
+    private void report(boolean incident, Report report){
         ScheduleInformation scheduleInformation;
         SimpleReportLine reportLine;
         LocalDateTime lastExecTime;
@@ -115,5 +115,9 @@ public class ReportService {
 
     public boolean haveToReport(){
         return this.haveToReport;
+    }
+
+    public LocalDateTime getStartTime(){
+        return SupervisorService.getStartTime();
     }
 }

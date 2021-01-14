@@ -31,4 +31,8 @@ public class SupervisorService {
 		reportService.proceed();
 		stateDataService.saveAllStates();
 	}
+
+	static public LocalDateTime getStartTime(){
+		return startTime;
+	}
 }

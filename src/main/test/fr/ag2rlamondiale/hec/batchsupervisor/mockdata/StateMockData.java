@@ -23,13 +23,14 @@ public class StateMockData {
     public SupervisorResult bs1Result = SupervisorResult.OK;
     public SupervisorResult bs3Result = SupervisorResult.LAUNCH_KO;
 
-    public BatchState bs1 = new BatchState(idBatch1, bs1Create, supervisorDate, bs1Result);
+    public BatchState bs1 = new BatchState("1", bs1Create, supervisorDate, bs1Result);
     public BatchState bs2 = new BatchState(idBatch1, bs2Create);
     public BatchState bs3 = new BatchState(idBatch2, bs3Create, supervisorDate, bs3Result);
 
     public List<BatchState> lastList = Arrays.asList(bs2, bs3);
     public List<BatchState> b1List = Arrays.asList(bs1, bs2);
     public List<BatchState> allList = Arrays.asList(bs1, bs2, bs3);
+    public List<BatchState> proceedStates = Arrays.asList(bs1, bs3);
 
     public Mono<BatchStateListDto> lastMono = Mono.just(new BatchStateListDto(lastList));
     public Mono<BatchStateListDto> b1Mono = Mono.just(new BatchStateListDto(b1List));

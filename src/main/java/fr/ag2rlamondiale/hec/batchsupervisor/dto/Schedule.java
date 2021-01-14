@@ -24,6 +24,7 @@ public class Schedule {
 	private Integer freq;
 	private Integer startTime;
 	private Integer endTime;
+	private Integer delta;
 	private String description;
 
 	public Schedule(int planID, String batchID){
@@ -31,10 +32,11 @@ public class Schedule {
 		this.batchID = batchID;
 	}
 
-	public Schedule(int planID, String batchID, Integer freq, Integer startTime, Integer endTime){
+	public Schedule(int planID, String batchID, Integer freq, Integer startTime, Integer delta, Integer endTime){
 		this(planID, batchID);
 		this.freq = freq;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.delta = delta;
 	}
 }

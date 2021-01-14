@@ -1,8 +1,6 @@
 package fr.ag2rlamondiale.hec.batchsupervisor.service.data;
 
 import fr.ag2rlamondiale.hec.batchsupervisor.client.ScheduleClient;
-import fr.ag2rlamondiale.hec.batchsupervisor.dto.Schedule;
-import fr.ag2rlamondiale.hec.batchsupervisor.dto.ScheduleListDto;
 import fr.ag2rlamondiale.hec.batchsupervisor.mockdata.ScheduleMockData;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.mockito.junit.MockitoJUnitRunner;
-import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScheduleDataServiceTest {
@@ -44,7 +39,7 @@ public class ScheduleDataServiceTest {
 
     @Test
     public void getAllBatchIds() {
-        assertEquals(scheduleDataService.getAllBatchIds(), dm.BatchesId);
+        assertEquals(scheduleDataService.getAllBatchIds(), dm.batchesId);
     }
 
     @Test

@@ -1,30 +1,25 @@
 package fr.ag2rlamondiale.hec.batchsupervisor.service.process;
 
+import fr.ag2rlamondiale.hec.batchsupervisor.dto.BatchState;
 import fr.ag2rlamondiale.hec.batchsupervisor.mockdata.ScheduleMockData;
 import fr.ag2rlamondiale.hec.batchsupervisor.mockdata.StateMockData;
+import fr.ag2rlamondiale.hec.batchsupervisor.mockdata.SupervisorMockData;
+import fr.ag2rlamondiale.hec.batchsupervisor.model.SupervisorResult;
 import fr.ag2rlamondiale.hec.batchsupervisor.service.data.StateDataService;
-import fr.ag2rlamondiale.hec.batchsupervisor.useful.Useful;
-import org.apache.tomcat.jni.Local;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.time.LocalDateTime;
 
-import static org.mockito.Mockito.doReturn;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BatchServiceTest {
     @InjectMocks
+    @Spy
     private BatchService batchService;
 
     @Mock
@@ -40,32 +35,54 @@ public class BatchServiceTest {
     private ReportService reportService;
 
 
-    private ScheduleMockData scheduleMockData = new ScheduleMockData();
-    private StateMockData stateMockData = new StateMockData();
-    private DataMock dm = new DataMock();
+    private final ScheduleMockData scheduleMockData = new ScheduleMockData();
+    private final StateMockData stateMockData = new StateMockData();
+    private final SupervisorMockData supervisorMockData = new SupervisorMockData();
 
-    static public class DataMock{
-        LocalDateTime supervisorStartTime = Useful.getTodayWithTime(10, 35);
-    }
-
-    @Before
-    public void init(){
-        scheduleService.setSchedules(scheduleMockData.schedulesList);
-        stateService.setStates(stateMockData.b1List);
-        SupervisorService.startTime = dm.supervisorStartTime;
-    }
 
     @Test
     public void proceed() {
-        Mockito.doNothing().when(stateService).load(scheduleMockData.idBatch1);
-        Mockito.doNothing().when(scheduleService).load(scheduleMockData.idBatch1);
+        when(batchService.getStartTime())
+                .thenReturn(supervisorMockData.supervisorStartTime);
 
-        batchService.proceed(scheduleMockData.idBatch2);
+        when(stateService.next())
+                .thenReturn(stateMockData.bs2, null)
+                .thenReturn(stateMockData.bs1, stateMockData.bs2, null);
 
-        assertEquals();
+        when(scheduleService.next())
+                .thenReturn(null)
+                .thenReturn(scheduleMockData.slot1, scheduleMockData.slot2, scheduleMockData.slot3, null);
+
+
+        batchService.proceed(scheduleMockData.idBatch1);
+        batchService.proceed(scheduleMockData.idBatch1);
+
+        verify(stateDataService).updateStateLater(stateMockData.bs2, SupervisorResult.OUT_SLOT_KO);
+        verify(stateDataService).updateStateLater(stateMockData.bs2, SupervisorResult.OK);
+        verify(scheduleService, times(5)).next();
+        verify(stateService, times(5)).next();
+        verify(batchService).addToReport(false);
     }
 
     @Test
     public void addToReport() {
+        BatchState lastSaved = stateMockData.bs2;
+
+        when(reportService.haveToReport())
+                .thenReturn(true)
+                .thenReturn(true)
+                .thenReturn(false);
+
+        when(stateDataService.getLastSaved())
+                .thenReturn(lastSaved)
+                .thenReturn(null)
+                .thenReturn(lastSaved);
+
+        batchService.addToReport(true);
+        batchService.addToReport(true);
+        batchService.addToReport(false);
+
+        verify(reportService, times(2)).addToReportList(lastSaved);
+        verify(reportService).addToReportList(null);
     }
 }

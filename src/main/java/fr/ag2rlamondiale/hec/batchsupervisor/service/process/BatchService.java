@@ -1,6 +1,7 @@
 package fr.ag2rlamondiale.hec.batchsupervisor.service.process;
 
 
+import fr.ag2rlamondiale.hec.batchsupervisor.dto.Schedule;
 import fr.ag2rlamondiale.hec.batchsupervisor.service.data.StateDataService;
 import fr.ag2rlamondiale.hec.batchsupervisor.dto.BatchState;
 import fr.ag2rlamondiale.hec.batchsupervisor.model.Slot;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -35,7 +38,7 @@ public class BatchService {
 			return;
 		}
 
-		scheduleService.loadSlots(batchState.getCreateDate(), SupervisorService.startTime);
+		scheduleService.loadSlots(batchState.getCreateDate(), getStartTime());
 		slot = scheduleService.next();
 		
 		if(batchState.wasProceed()) {
@@ -47,7 +50,7 @@ public class BatchService {
 		while(batchState != null || slot != null) {
 			if(batchState == null) {
 				if(!slot.isActive()) {
-					stateDataService.createStateLater(SupervisorResult.LAUNCH_KO, idBatch, slot.getEnd());
+					stateDataService.createStateLater(SupervisorResult.LAUNCH_KO, idBatch);
 				}
 				slot = scheduleService.next();
 			}
@@ -58,7 +61,7 @@ public class BatchService {
 				stateDataService.updateStateLater(batchState, SupervisorResult.OUT_SLOT_KO);
 				batchState = stateService.next();
 			}else if(slot.isTimeAfter(batchState.getCreateDate())) {
-				stateDataService.createStateLater(SupervisorResult.LAUNCH_KO, idBatch, slot.getEnd());
+				stateDataService.createStateLater(SupervisorResult.LAUNCH_KO, idBatch);
 				slot = scheduleService.next();
 			}else {
 				stateDataService.updateStateLater(batchState, SupervisorResult.OK);
@@ -69,19 +72,24 @@ public class BatchService {
 		this.addToReport(firstWasProceed);
 	}
 
+	public LocalDateTime getStartTime(){
+		return SupervisorService.startTime;
+	}
+
 	public void addToReport(boolean firstWasProceed){
+		BatchState lastSaved = stateDataService.getLastSaved();
 		if(reportService.haveToReport()){
 			if(stateDataService.getLastSaved() != null){
-				reportService.addToReportList(stateDataService.getLastSaved());
+				reportService.addToReportList(lastSaved);
 			}else{
 				reportService.addToReportList(stateService.first());
 			}
 		}
-		else if(stateDataService.getLastSaved() != null && stateDataService.getLastSaved().getResult() != SupervisorResult.OK
+		else if(lastSaved != null && lastSaved.getResult() != SupervisorResult.OK
 				&& (stateService.first() == null || firstWasProceed || stateService.first().getResult() == SupervisorResult.OK)) {
 			// sauvgarder pour envoi mail
-			reportService.addToReportList(stateDataService.getLastSaved());
-			log.info("Envoie notification KO pour " + stateDataService.getLastSaved().toString());
+			reportService.addToReportList(lastSaved);
+			log.info("Envoie notification KO pour " + lastSaved.toString());
 		}
 	}
 }

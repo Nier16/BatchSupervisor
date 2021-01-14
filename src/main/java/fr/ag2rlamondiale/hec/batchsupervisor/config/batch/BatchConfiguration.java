@@ -1,4 +1,4 @@
-package fr.ag2rlamondiale.hec.batchsupervisor.useful;
+package fr.ag2rlamondiale.hec.batchsupervisor.config.batch;
 
 import fr.ag2rlamondiale.hec.batchsupervisor.Launcher;
 import lombok.AllArgsConstructor;
@@ -42,5 +42,9 @@ public class BatchConfiguration extends DefaultBatchConfigurer {
         return stepBuilderFactory.get("step1")
                 .tasklet(processor())
                 .build();
+    }
+
+    @Override
+    public void setDataSource(DataSource dataSource) {
     }
 }

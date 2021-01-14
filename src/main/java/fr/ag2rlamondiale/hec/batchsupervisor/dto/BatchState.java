@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BatchState {
 	private Integer idExecution;
 	private String idBatch;
@@ -16,11 +17,10 @@ public class BatchState {
 	private LocalDateTime supervisorDate;
 	private SupervisorResult result;
 
-	public BatchState(){
-
-	}
-
 	public BatchState(String idBatch, LocalDateTime createDate, LocalDateTime supervisorDate, SupervisorResult result){
+		this(idBatch, createDate);
+		this.supervisorDate = supervisorDate;
+		this.result = result;
 	}
 	
 	public BatchState(String idBatch, LocalDateTime createDate) {

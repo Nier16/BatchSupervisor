@@ -166,9 +166,7 @@
                                 <exclude>**/dto/**.class</exclude>
                                 <exclude>**/model/**.class</exclude>
                                 <exclude>**/config/**</exclude>
-                                <exclude>**/repository/**.class</exclude>
-                                <exclude>**/entity/**</exclude>
-                                <exclude>**/BatchStateReaderApplication.class</exclude>
+                                <exclude>**/BatchSupervisorApplication.class</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -184,9 +182,7 @@
                                 <exclude>**/dto/**.class</exclude>
                                 <exclude>**/model/**.class</exclude>
                                 <exclude>**/config/**</exclude>
-                                <exclude>**/repository/**.class</exclude>
-                                <exclude>**/entity/**</exclude>
-                                <exclude>**/BatchStateReaderApplication.class</exclude>
+                                <exclude>**/BatchSupervisorApplication.class</exclude>
                             </excludes>
                             <dataFile>target/jacoco.exec</dataFile>
                         </configuration>

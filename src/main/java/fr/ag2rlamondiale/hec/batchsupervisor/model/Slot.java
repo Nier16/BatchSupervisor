@@ -11,7 +11,6 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Slot {
 	private LocalDateTime start;
 	private LocalDateTime end;

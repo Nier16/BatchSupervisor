@@ -1,7 +1,5 @@
 package fr.ag2rlamondiale.hec.batchsupervisor.service.process;
 
-
-import fr.ag2rlamondiale.hec.batchsupervisor.dto.Schedule;
 import fr.ag2rlamondiale.hec.batchsupervisor.service.data.StateDataService;
 import fr.ag2rlamondiale.hec.batchsupervisor.dto.BatchState;
 import fr.ag2rlamondiale.hec.batchsupervisor.model.Slot;
@@ -24,7 +22,7 @@ public class BatchService {
 	private final StateDataService stateDataService;
 	private final ReportService reportService;
 
-	void proceed(String idBatch) {
+	public void proceed(String idBatch) {
 		boolean firstWasProceed = true;
 		Slot slot;
 		BatchState batchState;

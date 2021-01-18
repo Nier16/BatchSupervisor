@@ -2,16 +2,12 @@ package fr.ag2rlamondiale.hec.batchsupervisor.service.data;
 
 import fr.ag2rlamondiale.hec.batchsupervisor.client.ScheduleClient;
 import fr.ag2rlamondiale.hec.batchsupervisor.dto.Schedule;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
 @Service
 public class ScheduleDataService {
     private List<Schedule> allSchedules;

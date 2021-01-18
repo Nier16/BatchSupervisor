@@ -10,7 +10,6 @@ import fr.ag2rlamondiale.hec.batchsupervisor.service.data.StateDataService;
 import fr.ag2rlamondiale.hec.batchsupervisor.useful.Useful;
 import fr.ag2rlamondiale.hec.batchsupervisor.model.report.Report;
 import fr.ag2rlamondiale.hec.batchsupervisor.model.report.SimpleReportLine;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +34,7 @@ public class ReportService {
     private final FreeMarkerService freeMarkerService;
 
     private final List<BatchState> stateToReport;
-    private boolean haveToReport;
+    private Boolean haveToReport;
 
     public ReportService(EmailService emailService,
                          SupervisorInformation supervisorInformation,
@@ -75,7 +74,7 @@ public class ReportService {
         for(BatchState batchState : this.stateToReport){
             lastExecTime = stateDataService.getLastStateCreateTimeForBatch(batchState.getIdBatch());
             scheduleInformation = scheduleService
-                    .getScheduleInformation(batchState.getIdBatch());
+                    .getScheduleInformation(batchState.getIdBatch(), getStartTime());
 
             reportLine = scheduleInformation.toReportLine(
                     new SimpleReportLine(batchState.getResult()), lastExecTime);
@@ -98,22 +97,19 @@ public class ReportService {
         this.stateToReport.add(state);
     }
 
-    public void initReportNeeded(){
-        this.haveToReport = this.checkIfReportNeeded();
-    }
-
-    private boolean checkIfReportNeeded(){
-        LocalDateTime timeToReport = Useful.getTodayWithTime(reportTimeInMinutes / 60, reportTimeInMinutes % 60);
-        if(this.supervisorInformation.getLastReportTime() != null){
-            return timeToReport.isBefore(timeToReport)
-                    && Useful.isAfterOrEquals(SupervisorService.startTime, timeToReport);
-        }else{
-            return Useful.isAfterOrEquals(SupervisorService.startTime, timeToReport)
-                    && Useful.isAfterOrEquals(timeToReport, SupervisorService.startTime.plusMinutes(DELTA));
-        }
-    }
-
     public boolean haveToReport(){
+        if(this.haveToReport == null){
+            LocalDateTime lastReportTime = supervisorInformation.getLastReportTime();
+            LocalDateTime timeToReport = Useful.getTodayWithTime(reportTimeInMinutes / 60, reportTimeInMinutes % 60);
+            LocalDateTime startTime = getStartTime();
+            if(lastReportTime != null){
+                this.haveToReport =  lastReportTime.isBefore(timeToReport)
+                        && Useful.isAfterOrEquals(timeToReport, startTime);
+            }else{
+                this.haveToReport = Useful.isAfterOrEquals(timeToReport, startTime)
+                        && Useful.isAfterOrEquals(startTime, timeToReport.plusMinutes(DELTA));
+            }
+        }
         return this.haveToReport;
     }
 

@@ -35,7 +35,6 @@ public class SupervisorServiceTest {
     @Test
     public void proceed() {
         doReturn(null).when(stateDataService).loadLastStateForEachBatch();
-        doNothing().when(reportService).initReportNeeded();
         doNothing().when(scheduleDataService).loadAllActiveSchedules();
         doNothing().when(batchService).proceed(scheduleMockData.idBatch1);
         doNothing().when(reportService).proceed();

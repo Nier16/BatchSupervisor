@@ -39,4 +39,25 @@ public class Schedule {
 		this.endTime = endTime;
 		this.delta = delta;
 	}
+
+	public Schedule(int freq, int startTime, int endTime, int delta){
+		this.freq = freq;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.delta = delta;
+	}
+
+	public Schedule(int startTime, int endTime, int delta){
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.delta = delta;
+	}
+
+	public Schedule(List<Integer> years, List<Integer> months, List<Integer> monthDays, List<Integer> weeks, List<Integer> weekDays){
+		this.years = years;
+		this.months = months;
+		this.monthDays = monthDays;
+		this.weeks = weeks;
+		this.weekDays = weekDays;
+	}
 }

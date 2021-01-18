@@ -2,6 +2,7 @@ package fr.ag2rlamondiale.hec.batchsupervisor.service.data;
 
 import fr.ag2rlamondiale.hec.batchsupervisor.client.ScheduleClient;
 import fr.ag2rlamondiale.hec.batchsupervisor.mockdata.ScheduleMockData;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 
@@ -27,14 +29,14 @@ public class ScheduleDataServiceTest {
 
     @Before
     public void initAllSchedules(){
-        this.scheduleDataService.setAllSchedules(dm.schedulesList);
+        ReflectionTestUtils.setField(scheduleDataService, "allSchedules", dm.schedulesList);
     }
 
     @Test
     public void loadAllActiveSchedules(){
         when(scheduleClient.getAllActiveSchedules()).thenReturn(dm.schedulesMono);
         scheduleDataService.loadAllActiveSchedules();
-        assertEquals(scheduleDataService.getAllSchedules(), dm.schedulesList);
+        assertEquals(ReflectionTestUtils.getField(scheduleDataService, "allSchedules"), dm.schedulesList);
     }
 
     @Test

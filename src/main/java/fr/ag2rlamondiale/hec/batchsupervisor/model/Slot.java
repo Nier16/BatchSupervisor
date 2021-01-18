@@ -3,6 +3,7 @@ package fr.ag2rlamondiale.hec.batchsupervisor.model;
 import java.time.LocalDateTime;
 
 import fr.ag2rlamondiale.hec.batchsupervisor.service.process.SupervisorService;
+import fr.ag2rlamondiale.hec.batchsupervisor.useful.Useful;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,18 @@ public class Slot {
 	private LocalDateTime start;
 	private LocalDateTime end;
 
+	public Slot(LocalDateTime start, int delta){
+		this.start = start;
+		this.end = start.plusSeconds(delta);
+	}
+
+	public Slot(LocalDateTime start, LocalDateTime end, int delta){
+		this.start = start;
+		this.end = end.plusSeconds(delta);
+	}
+
 	public boolean isActive(LocalDateTime time) {
-		return time.isAfter(this.start) && time.isBefore(this.end);
+		return Useful.isAfterOrEquals(this.start, time) && Useful.isBeforeOrEquals(this.end, time);
 	}
 
 	public boolean isActive() {

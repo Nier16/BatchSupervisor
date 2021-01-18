@@ -21,7 +21,6 @@ public class SupervisorService {
 
 	public void proceed() {
 		stateDataService.loadLastStateForEachBatch();
-		reportService.initReportNeeded();
 		scheduleDataService.loadAllActiveSchedules();
 
 		List<String> batchIds = scheduleDataService.getAllBatchIds();

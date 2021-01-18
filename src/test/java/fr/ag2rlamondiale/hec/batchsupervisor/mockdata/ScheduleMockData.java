@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ScheduleMockData {
@@ -29,6 +30,8 @@ public class ScheduleMockData {
     public ScheduleInformation scheduleInformation = new ScheduleInformation(slot3);
 
     public List<Slot> slotList = Arrays.asList(slot1, slot2, slot3);
+
+    public List<Schedule> schedulesBatch1 = Collections.singletonList(s1);
 
     public List<String> batchesId = Arrays.asList(idBatch1, idBatch2);
 

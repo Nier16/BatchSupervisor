@@ -1,5 +1,6 @@
 package fr.ag2rlamondiale.hec.batchsupervisor.service.process;
 
+import fr.ag2rlamondiale.hec.batchsupervisor.config.supervisor.SupervisorInformation;
 import fr.ag2rlamondiale.hec.batchsupervisor.mail.model.TemplatesNames;
 import fr.ag2rlamondiale.hec.batchsupervisor.mail.service.EmailService;
 import fr.ag2rlamondiale.hec.batchsupervisor.mockdata.ReportMockData;
@@ -20,6 +21,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReportServiceTest {
@@ -36,6 +38,9 @@ public class ReportServiceTest {
 
     @Mock
     private StateDataService stateDataService;
+
+    @Mock
+    private SupervisorInformation supervisorInformation;
 
 
     private final ScheduleMockData scheduleMockData = new ScheduleMockData();
@@ -61,7 +66,7 @@ public class ReportServiceTest {
 
         when(reportService.getStartTime()).thenReturn(supervisorMockData.supervisorStartTime);
         when(stateDataService.getLastStateCreateTimeForBatch(stateMockData.idBatch2)).thenReturn(stateMockData.bs3Create);
-        when(scheduleService.getScheduleInformation(stateMockData.idBatch2)).thenReturn(scheduleMockData.scheduleInformation);
+        when(scheduleService.getScheduleInformation(stateMockData.idBatch2, supervisorMockData.supervisorStartTime)).thenReturn(scheduleMockData.scheduleInformation);
         doNothing().when(emailService).sendEmail("Report", TemplatesNames.SIMPLE_REPORT, report);
 
         reportService.proceed();
@@ -71,10 +76,42 @@ public class ReportServiceTest {
 
     @Test
     public void addToReportList() {
+        reportService.addToReportList(stateMockData.bs1);
+        assertEquals(ReflectionTestUtils.getField(
+                reportService,
+                "stateToReport"
+        ), Collections.singletonList(stateMockData.bs1));
     }
 
     @Test
     public void initReportNeeded() {
+        ReflectionTestUtils.setField(
+                reportService,
+                "reportTimeInMinutes",
+                supervisorMockData.supervisorStartTime.getMinute() + supervisorMockData.supervisorStartTime.getHour() * 60);
+        when(reportService.getStartTime())
+                .thenReturn(supervisorMockData.supervisorStartTime)
+                .thenReturn(supervisorMockData.supervisorStartTime)
+                .thenReturn(supervisorMockData.supervisorStartTime)
+                .thenReturn(supervisorMockData.supervisorStartTime.minusMinutes(1));
+        when(supervisorInformation.getLastReportTime())
+                .thenReturn(supervisorMockData.supervisorStartTime.minusMinutes(1))
+                .thenReturn(supervisorMockData.supervisorStartTime)
+                .thenReturn(null)
+                .thenReturn(null);
 
+        assertTrue(reportService.haveToReport());
+        assertFalse(resetAndTestHaveToReport());
+        assertTrue(resetAndTestHaveToReport());
+        assertFalse(resetAndTestHaveToReport());
+    }
+
+    private boolean resetAndTestHaveToReport(){
+        ReflectionTestUtils.setField(
+                reportService,
+                "haveToReport",
+                null
+        );
+        return reportService.haveToReport();
     }
 }

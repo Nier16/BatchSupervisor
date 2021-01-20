@@ -19,6 +19,16 @@ public class ClientsBeans {
     @Value("${ag2r.hec.state.reader.base-url}")
     private String stateReaderBaseUrl;
 
+    @Value("${jwt.private.schedule.key}")
+    private String privateKeySchedulePath;
+
+    @Value("${jwt.private.stats.reader.key}")
+    private String privateKeyStatsReaderPath;
+
+    @Value("${jwt.private.stats.writer.key}")
+    private String privateKeyStatsWriterPath;
+
+
     private final WebClient.Builder builder;
     private final ClientTokenProvider clientTokenProvider;
 
@@ -31,7 +41,7 @@ public class ClientsBeans {
     public WebClient scheduleWebClient() {
         return builder
                 .baseUrl(scheduleBaseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader())
+                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeySchedulePath))
                 .build();
     }
 
@@ -39,7 +49,7 @@ public class ClientsBeans {
     public WebClient stateWriteWebClient() {
         return builder
                 .baseUrl(stateWriterBaseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader())
+                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeyStatsWriterPath))
                 .build();
     }
 
@@ -47,7 +57,7 @@ public class ClientsBeans {
     public WebClient stateWebClient() {
         return builder
                 .baseUrl(stateReaderBaseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader())
+                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeyStatsReaderPath))
                 .build();
     }
 

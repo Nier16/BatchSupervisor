@@ -18,13 +18,13 @@ public class ClientTokenProvider {
     @Value("${claim.idren}")
     private String supervisorIdren;
 
-    @Value("${jwt.private.key}")
-    private String privateKeyPath;
+    /*@Value("${jwt.private.key}")
+    private String privateKeyPath;*/
 
     private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientTokenProvider.class);
-    public String injectHeader() {
+    public String injectHeader(String privateKeyPath) {
         Map<String, Object> claims=new HashMap<>();
         LOGGER.debug("Put idren in token to call microservice : " + supervisorIdren);
         claims.put(IDREN_KEY, supervisorIdren);

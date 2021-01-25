@@ -1,4 +1,4 @@
-package fr.ag2rlamondiale.hec.batchsupervisor.model.report;
+package fr.ag2rlamondiale.hec.batchsupervisor.dto;
 
 import lombok.AllArgsConstructor;
 
@@ -9,7 +9,7 @@ public enum ReportType {
 
     private String text;
 
-    public String toString(){
+    public String toString() {
         return this.text;
     }
 }

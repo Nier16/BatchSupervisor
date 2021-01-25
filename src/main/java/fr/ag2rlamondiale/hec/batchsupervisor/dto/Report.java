@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BatchStateListDto {
-    private List<BatchState> values;
+public class Report {
+    private Map<String, SimpleReportGroup> reports;
+    private Slot period;
+    private ReportType type;
 }

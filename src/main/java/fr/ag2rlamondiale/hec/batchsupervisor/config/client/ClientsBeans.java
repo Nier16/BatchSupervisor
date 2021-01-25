@@ -10,54 +10,23 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class ClientsBeans {
 
-    @Value("${ag2r.hec.schedule.base-url}")
-    private String scheduleBaseUrl;
-
-    @Value("${ag2r.hec.state.writer.base-url}")
-    private String stateWriterBaseUrl;
-
-    @Value("${ag2r.hec.state.reader.base-url}")
-    private String stateReaderBaseUrl;
-
-    @Value("${jwt.private.schedule.key}")
-    private String privateKeySchedulePath;
-
-    @Value("${jwt.private.stats.reader.key}")
-    private String privateKeyStatsReaderPath;
-
-    @Value("${jwt.private.stats.writer.key}")
-    private String privateKeyStatsWriterPath;
-
-
     private final WebClient.Builder builder;
     private final ClientTokenProvider clientTokenProvider;
+    @Value("${ag2r.hec.batch.orchestrator.base-url}")
+    private String orchestratorBaseUrl;
+    @Value("${jwt.private.batch.orchestrator.key}")
+    private String privateKeyOrchestrator;
 
-    public ClientsBeans(WebClient.Builder builder, ClientTokenProvider clientTokenProvider){
+    public ClientsBeans(WebClient.Builder builder, ClientTokenProvider clientTokenProvider) {
         this.builder = builder;
         this.clientTokenProvider = clientTokenProvider;
     }
 
-    @Bean(name = "schedule")
+    @Bean
     public WebClient scheduleWebClient() {
         return builder
-                .baseUrl(scheduleBaseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeySchedulePath))
-                .build();
-    }
-
-    @Bean(name = "stateWriter")
-    public WebClient stateWriteWebClient() {
-        return builder
-                .baseUrl(stateWriterBaseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeyStatsWriterPath))
-                .build();
-    }
-
-    @Bean(name = "stateReader")
-    public WebClient stateWebClient() {
-        return builder
-                .baseUrl(stateReaderBaseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeyStatsReaderPath))
+                .baseUrl(orchestratorBaseUrl)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, clientTokenProvider.injectHeader(privateKeyOrchestrator))
                 .build();
     }
 
